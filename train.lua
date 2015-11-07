@@ -1,14 +1,13 @@
 require 'nn'
 require 'optim'
 
--- corpus file name
 corpus = 'linescorpus.txt'
 --tensortype = torch.getdefaulttensortype()
 minfreq = 5
 dim = 200
 word = torch.IntTensor(1) 
-window = 5
-lr = 0.1
+window = 5 
+lr = 0.07
 vocab = {}
 index2word = {}
 word2index = {}
@@ -128,17 +127,26 @@ function getNextBatch()
   print("Training...")
   local start = sys.clock()
   local cnt = 1
+  p=((window-1)/2);
+  p=p+1;
   for line in fptr:lines() do
       word=line
       word_idx = word2index[word]
+      bar=p;
       if word_idx ~= nil then -- word exists in vocab
+      	remword=window_words[bar]
+      	for j=bar,window-2 do
+      		window_words[j]=window_words[j+1];
+      	end
+      	window_words[window-1]=word_idx
         input_batch[cnt]=window_words
         --print(window_words)
-        target_batch[cnt]=word_idx
-        for i=1,window-2 do
-          window_words[i]=window_words[i+1]
+        target_batch[cnt]=remword
+        
+        for j=1,bar-2 do
+        	window_words[j]=window_words[j+1];
         end
-        window_words[window-1]=word_idx
+        window_words[bar-1]=remword
         cnt=cnt+1
         if cnt==batchsize+1 then break end
       end
