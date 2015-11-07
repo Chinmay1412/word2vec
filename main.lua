@@ -1,5 +1,5 @@
 require 'train'
-require 'predict_next_word'
+--require 'predict_next_word'
 
 use_manual_technique = false;
 epochs = 2;
